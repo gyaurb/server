@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express"
 import dotenv from "dotenv"
-import axios from 'axios'
+import axios from "axios"
 //import morgan from "morgan"
 //import path from "path"
 //import rfs from "rotating-file-stream"
@@ -35,10 +35,18 @@ app.post("/login", async (req: Request, res: Response) => {
     const response = await axios.post(loginService, req.body)
     console.log(response)
     if (response.data.resultado === 1) {
-      res.status(200).send(response.data.dato)
+      res.status(200).send({
+        resultado: 1,
+        token: response.data.dato.token,
+        mensaje: "Inicio de sesión exitoso",
+      })
     }
   } catch (error) {
-    res.status(401).send("Error en las credenciales")
+    res.status(401).send({
+      resultado: 0,
+      token: "",
+      mensaje: "Error en las credenciales de acceso",
+    })
   }
 })
 

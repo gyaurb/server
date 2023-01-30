@@ -44,11 +44,19 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const response = yield axios_1.default.post(loginService, req.body);
         console.log(response);
         if (response.data.resultado === 1) {
-            res.status(200).send(response.data.dato);
+            res.status(200).send({
+                resultado: 1,
+                token: response.data.dato.token,
+                mensaje: "Inicio de sesión exitoso",
+            });
         }
     }
     catch (error) {
-        res.status(401).send("Error en las credenciales");
+        res.status(401).send({
+            resultado: 0,
+            token: "",
+            mensaje: "Error en las credenciales de acceso",
+        });
     }
 }));
 app.listen(port, () => {
