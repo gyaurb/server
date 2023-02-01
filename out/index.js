@@ -46,15 +46,15 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log(response);
         if (response.data.resultado === 1) {
             res.status(200).send({
-                //resultado: 1,
+                resultado: 1,
                 token: response.data.dato.token,
                 mensaje: "Inicio de sesión exitoso",
             });
         }
     }
     catch (error) {
-        res.status(401).send({
-            //resultado: 0,
+        res.status(200).send({
+            resultado: 0,
             //token: "",
             mensaje: "Error en las credenciales de acceso",
         });
