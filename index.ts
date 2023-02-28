@@ -9,6 +9,8 @@ dotenv.config()
 const app: Express = express()
 const port = process.env.SERVER_PORT || 3000
 const loginService = process.env.LOGIN_URL_PROD || ""
+const niubizAuthService = process.env.NIUBIZ_URL_DEV || ""
+const niubizCredentials = process.env.NIUBIZ_CREDENTIALS_DEV || ""
 
 /*
 //crear rotation write stream
@@ -22,16 +24,7 @@ app.use(morgan("combined", { stream: accessLogStream }))
 
 app.use(express.json())
 
-app.get("/:username/:detail", (req: Request, res: Response) => {
-  const data = {
-    username: req.params.username,
-    detail: req.params.detail,
-  }
-  res.status(200).send(data)
-})
-
 app.post("/login", async (req: Request, res: Response) => {
-  console.log(req)
   try {
     const response = await axios.post(loginService, req.body)
     console.log(response)
@@ -48,6 +41,25 @@ app.post("/login", async (req: Request, res: Response) => {
       //token: "",
       mensaje: "Error en las credenciales de acceso",
     })
+  }
+})
+
+
+app.post("/niubiz-auth", async (req: Request, res: Response)=> {
+  try {
+    const response = await axios.post(niubizAuthService, null, { headers: {"Authorization" : "Basic "+ niubizCredentials}})
+    console.log(response.data)    
+    res.status(200).send({
+      resultado: 1,
+      token: response.data,
+      })    
+  } catch (error) {
+    console.log(error)    
+      res.status(200).send({
+      resultado: 0,
+      //token: "",
+      mensaje: "Error en la generación de token Niubiz",
+    })    
   }
 })
 

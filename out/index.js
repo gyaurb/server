@@ -22,6 +22,8 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.SERVER_PORT || 3000;
 const loginService = process.env.LOGIN_URL_PROD || "";
+const niubizAuthService = process.env.NIUBIZ_URL_DEV || "";
+const niubizCredentials = process.env.NIUBIZ_CREDENTIALS_DEV || "";
 /*
 //crear rotation write stream
 const accessLogStream = rfs.createStream("access.log", {
@@ -32,15 +34,7 @@ const accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }))
 */
 app.use(express_1.default.json());
-app.get("/:username/:detail", (req, res) => {
-    const data = {
-        username: req.params.username,
-        detail: req.params.detail,
-    };
-    res.status(200).send(data);
-});
 app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req);
     try {
         const response = yield axios_1.default.post(loginService, req.body);
         console.log(response);
@@ -57,6 +51,24 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             resultado: 0,
             //token: "",
             mensaje: "Error en las credenciales de acceso",
+        });
+    }
+}));
+app.post("/niubiz-auth", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield axios_1.default.post(niubizAuthService, null, { headers: { "Authorization": "Basic " + niubizCredentials } });
+        console.log(response.data);
+        res.status(200).send({
+            resultado: 1,
+            token: response.data,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(200).send({
+            resultado: 0,
+            //token: "",
+            mensaje: "Error en la generación de token Niubiz",
         });
     }
 }));
