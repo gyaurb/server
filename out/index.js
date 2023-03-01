@@ -24,7 +24,8 @@ const port = process.env.SERVER_PORT || 3000;
 const loginService = process.env.LOGIN_URL_PROD || "";
 const niubizAuthService = process.env.NIUBIZ_URL_DEV || "";
 const niubizCredentials = process.env.NIUBIZ_CREDENTIALS_DEV || "";
-/*
+const niubizPinHashService = process.env.NIUBIZ_CTF_DEV || "";
+/*NIUBIZ_CTF_DEV
 //crear rotation write stream
 const accessLogStream = rfs.createStream("access.log", {
   interval: "1d", // rotacion diaria
@@ -55,6 +56,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 }));
 app.post("/niubiz-auth", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("auth");
     try {
         const response = yield axios_1.default.post(niubizAuthService, null, { headers: { "Authorization": "Basic " + niubizCredentials } });
         console.log(response.data);
@@ -72,6 +74,31 @@ app.post("/niubiz-auth", (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
 }));
+app.post("/niubiz-ph", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("ph");
+    try {
+        const response = yield axios_1.default.post(niubizPinHashService, null, { headers: { "Authorization": req.body.token } });
+        console.log(response.data);
+        res.status(200).send({
+            resultado: 1,
+            data: response.data,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(200).send({
+            resultado: 0,
+            //token: "",
+            mensaje: "Error en la generación de token Niubiz",
+        });
+    }
+}));
+{ /*
+
+https://apitestenv.vnforapps.com/api.certificate/v1/query/602545705
+
+*/
+}
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
