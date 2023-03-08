@@ -22,9 +22,11 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.SERVER_PORT || 3000;
 const loginService = process.env.LOGIN_URL_PROD || "";
-const niubizAuthService = process.env.NIUBIZ_URL_DEV || "";
+const niubizAuthService = process.env.NIUBIZ_SEGURIDAD_DEV || "";
 const niubizCredentials = process.env.NIUBIZ_CREDENTIALS_DEV || "";
 const niubizPinHashService = process.env.NIUBIZ_CTF_DEV || "";
+const niubizCodigoComercio = process.env.NIUBIZ_CODIGO_COMERCIO || "";
+const niubizConsultaService = process.env.NIUBIZ_CONSULTA_DEV || "";
 /*NIUBIZ_CTF_DEV
 //crear rotation write stream
 const accessLogStream = rfs.createStream("access.log", {
@@ -89,16 +91,28 @@ app.post("/niubiz-ph", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(200).send({
             resultado: 0,
             //token: "",
-            mensaje: "Error en la generación de token Niubiz",
+            mensaje: "Error en la generación de pinHash Niubiz",
         });
     }
 }));
-{ /*
-
-https://apitestenv.vnforapps.com/api.certificate/v1/query/602545705
-
-*/
-}
+app.get("/niubiz-consulta/:token/:idpago", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("consulta");
+    try {
+        const response = yield axios_1.default.get(niubizConsultaService.toString() + "/" + req.params.idpago, { headers: { "Authorization": req.params.token } });
+        res.status(200).send({
+            resultado: 1,
+            data: response.data.order,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(200).send({
+            resultado: 0,
+            //token: "",
+            mensaje: "Error en la consulta de transacción Niubiz",
+        });
+    }
+}));
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
