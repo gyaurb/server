@@ -22,12 +22,13 @@ const port = process.env.SERVER_PORT || 3000;
 const env = process.env.ENVIRONMENT || "DEV";
 const niubizAuthService = (env === "PROD" ? process.env.NIUBIZ_SEGURIDAD_PROD : process.env.NIUBIZ_SEGURIDAD_DEV) || "";
 const niubizPinHashService = (env === "PROD" ? process.env.NIUBIZ_CERTIFICADO_PROD : process.env.NIUBIZ_CERTIFICADO_DEV) || "";
-const niubizConsultaService = (env ? process.env.NIUBIZ_CONSULTA_PROD : process.env.NIUBIZ_CONSULTA_DEV) || "";
-const niubizCredentials = (env ? process.env.NIUBIZ_CREDENCIALES_PROD : process.env.NIUBIZ_CREDENCIALES_DEV) || "";
+const niubizConsultaService = (env === "PROD" ? process.env.NIUBIZ_CONSULTA_PROD : process.env.NIUBIZ_CONSULTA_DEV) || "";
+const niubizCredentials = (env === "PROD" ? process.env.NIUBIZ_CREDENCIALES_PROD : process.env.NIUBIZ_CREDENCIALES_DEV) || "";
 app.use(express_1.default.json());
 router.post("/auth", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios_1.default.post(niubizAuthService, null, { headers: { "Authorization": "Basic " + niubizCredentials } });
+        console.log(response);
         res.status(200).send({
             resultado: 1,
             token: response.data,
@@ -41,8 +42,10 @@ router.post("/auth", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 }));
 router.post("/host", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("host");
     try {
         const response = yield axios_1.default.post(niubizPinHashService, null, { headers: { "Authorization": req.body.token } });
+        console.log(response);
         res.status(200).send({
             resultado: 1,
             data: response.data,
@@ -56,8 +59,10 @@ router.post("/host", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 }));
 router.get("/consulta/:token/:idpago", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("consulta");
     try {
         const response = yield axios_1.default.get(niubizConsultaService.toString() + "/" + req.params.idpago, { headers: { "Authorization": req.params.token } });
+        console.log(response);
         res.status(200).send({
             resultado: 1,
             data: response.data.order,
